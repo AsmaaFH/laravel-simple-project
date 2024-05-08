@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
     public function index()  {
-        $posts = Post::all();
+        $posts = Post::paginate(5);
         return view('index')->with('posts', $posts);
     }
 
@@ -23,7 +24,7 @@ class PostController extends Controller
     }
 
     public function create(Request $request){
-        
+
         $request->validate([
             'title' => 'required|string',
             'desc' => 'required|string',
@@ -35,8 +36,8 @@ class PostController extends Controller
             'desc' => $request->desc,
             'email' => $request->email,
         ]);
-        $posts = Post::all();
-        return view('index')->with('posts', $posts);
+
+        return redirect('index');
     }
 
     public function edit($id){
@@ -54,16 +55,15 @@ class PostController extends Controller
                 'email' => $request->email,
             ]);
 
-            // $this->index();
+            return redirect('index');
 
-            $posts = Post::all();
-            return view('index')->with('posts', $posts);
         }
     }
 
     public function delete($id){
         DB::table('posts')->where('id', $id)->delete();
-        $posts = Post::all();
-        return view('index')->with('posts', $posts);
+
+        return redirect('index');
+
     }
 }
